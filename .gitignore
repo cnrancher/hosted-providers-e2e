@@ -2,3 +2,9 @@ vendor
 .idea
 config
 *.test
+
+# PANDARIA:
+*.so
+tmp_*
+cattle-config-provisioning.yaml
+cattle-config-import.yaml

@@ -19,6 +19,7 @@ import (
 	"github.com/rancher/shepherd/extensions/cloudcredentials/aws"
 	"github.com/rancher/shepherd/extensions/cloudcredentials/azure"
 	"github.com/rancher/shepherd/extensions/cloudcredentials/google"
+	"github.com/rancher/shepherd/extensions/cloudcredentials/huawei"
 	shepherdclusters "github.com/rancher/shepherd/extensions/clusters"
 	"github.com/rancher/shepherd/extensions/defaults"
 	nodestat "github.com/rancher/shepherd/extensions/nodes"
@@ -70,6 +71,15 @@ func CommonSynchronizedBeforeSuite() {
 		credentialConfig := new(cloudcredentials.GoogleCredentialConfig)
 		config.LoadAndUpdateConfig("googleCredentials", credentialConfig, func() {
 			credentialConfig.AuthEncodedJSON = os.Getenv("GCP_CREDENTIALS")
+		})
+	// PANDARIA:
+	case "cce":
+		credentialConfig := new(cloudcredentials.HuaweiCredentialConfig)
+		config.LoadAndUpdateConfig("huaweiCredentials", credentialConfig, func() {
+			credentialConfig.AccessKey = os.Getenv("HUAWEI_ACCESS_KEY")
+			credentialConfig.SecretKey = os.Getenv("HUAWEI_SECRET_KEY")
+			credentialConfig.ProjectID = os.Getenv("HUAWEI_PROJECT_ID")
+			credentialConfig.RegionID = GetCCERegion()
 		})
 	}
 
@@ -166,6 +176,9 @@ func WaitUntilClusterIsReady(cluster *management.Cluster, client *rancher.Client
 			updatedCluster.GKEConfig = updatedCluster.GKEStatus.UpstreamSpec
 		case "eks":
 			updatedCluster.EKSConfig = updatedCluster.EKSStatus.UpstreamSpec
+		// PANDARIA:
+		case "cce":
+			updatedCluster.CCEConfig = updatedCluster.CCEStatus.UpstreamSpec
 		}
 	}
 	return updatedCluster, nil
@@ -260,6 +273,22 @@ func GetEKSRegion() string {
 		region = eksClusterConfig.Region
 		if region == "" {
 			region = "ap-south-1"
+		}
+	}
+	return region
+}
+
+// GetCCERegion fetches the value of CCE Region;
+// it first obtains the value from env var CCE_REGION, if the value is empty, it fetches the information from config file(cattle_config-import.yaml/cattle_config-provisioning.yaml)
+// if none of the sources can provide a value, it returns the default value
+func GetCCERegion() string {
+	region := os.Getenv("CCE_REGION")
+	if region == "" {
+		cceClusterConfig := new(management.CCEClusterConfigSpec)
+		config.LoadConfig("cceClusterConfig", cceClusterConfig)
+		region = cceClusterConfig.RegionID
+		if region == "" {
+			region = "ap-southeast-1" // hongkong-1
 		}
 	}
 	return region
@@ -380,6 +409,11 @@ func CreateCloudCredentials(client *rancher.Client) (string, error) {
 	case "gke":
 		cloudCredentialConfig = cloudcredentials.LoadCloudCredential("google")
 		cloudCredential, err = google.CreateGoogleCloudCredentials(client, cloudCredentialConfig)
+		Expect(err).To(BeNil())
+	// PANDARIA:
+	case "cce":
+		cloudCredentialConfig = cloudcredentials.LoadCloudCredential("huawei")
+		cloudCredential, err = huawei.CreateHuaweiCloudCredentials(client, cloudCredentialConfig)
 		Expect(err).To(BeNil())
 	}
 	return fmt.Sprintf("%s:%s", cloudCredential.Namespace, cloudCredential.Name), nil

@@ -128,6 +128,52 @@ gkeClusterConfig:
   zone: asia-south2-c
   projectID: <project>
 googleCredentials:
+huaweiCredentials:
+cceClusterConfig:
+  regionID: "ap-southeast-1"
+  name: ""
+  labels:
+  flavor: "cce.s1.small"
+  version: "v1.31"
+  description: "provisioning test"
+  hostNetwork:
+    vpcID: ""
+    subnetID: ""
+    securityGroup: ""
+  containerNetwork:
+    mode: "vpc-router"
+    cidr: "10.16.0.0/16"
+  authentication:
+  clusterBillingMode: 0
+  kubernetesSvcIPRange: "10.43.0.0/24"
+  tags:
+  kubeProxyMode: "iptables"
+  publicAccess: true
+  publicIP:
+    createEIP: true
+    eip:
+      ipType: "5_bgp"
+      bandwidth:
+        chargeMode: "traffic"
+        size: 50 # Both download & upload bandwith to 50Mbit
+        shareType: "PER"
+  nodePools:
+  - name: "np-1"
+    type: "vm"
+    nodeTemplate:
+      flavor: "kc1.xlarge.2"
+      availableZone: "ap-southeast-1a"
+      operatingSystem: "EulerOS 2.9"
+      sshKey: "starry"
+      rootVolume:
+        size: 40
+        type: "SSD"
+      dataVolumes:
+      - size: 100
+        type: "SSD"
+      billingMode: 0
+      runtime: "containerd"
+    initialNodeCount: 2 # The replicas of coredns & csi controller on cce is 2
 rancher:
   cleanup: false
   insecure: true

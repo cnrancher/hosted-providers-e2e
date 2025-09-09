@@ -35,7 +35,7 @@ func CreateCCEHostedCluster(client *rancher.Client, displayName, cloudCredential
 	if updateFunc != nil {
 		updateFunc(&cceClusterConfig)
 	}
-	ginkgo.GinkgoLogr.Info("Creating CCE cluster version %v ClusterCIDR %v", kubernetesVersion, cceClusterConfig.ContainerNetwork.CIDR)
+	ginkgo.GinkgoLogr.Info(fmt.Sprintf("Creating CCE cluster version %v ClusterCIDR %v", kubernetesVersion, cceClusterConfig.ContainerNetwork.CIDR))
 
 	return cce.CreateCCEHostedCluster(client, displayName, cloudCredentialID, cceClusterConfig, false, false, false, false, nil)
 }
@@ -57,6 +57,16 @@ func ImportCCEHostedCluster(client *rancher.Client, displayName, cloudCredential
 		return nil, err
 	}
 	return clusterResp, err
+}
+
+func DeleteCCEHostClusterNodeEIPs(cluster *management.Cluster, client *rancher.Client) {
+	Eventually(func() bool {
+		ginkgo.GinkgoLogr.Info("Cleaning up CCE Cluster Node EIPs...")
+		ok, err := cce.CleanupNodeEIP(client, cluster.ID)
+		Expect(err).To(BeNil())
+		return ok
+	}, tools.SetTimeout(5*time.Minute), 10*time.Second).Should(BeTrue())
+	ginkgo.GinkgoLogr.Info("Done Cleanup CCE Cluster Node EIPs")
 }
 
 // DeleteCCEHostCluster deletes the CCE cluster
@@ -93,8 +103,8 @@ func UpgradeClusterKubernetesVersion(cluster *management.Cluster, upgradeToVersi
 			ginkgo.GinkgoLogr.Info("Waiting for k8s upgrade to appear in CCEStatus.UpstreamSpec & CCEConfig ...")
 			cluster, err = client.Management.Cluster.ByID(cluster.ID)
 			Expect(err).To(BeNil())
-			ginkgo.GinkgoLogr.Info("UpstreamSpec.Version: %v, CCEConfig.Version %v, upgradeToVersion %v",
-				cluster.CCEStatus.UpstreamSpec.Version, cluster.CCEConfig.Version, upgradeToVersion)
+			ginkgo.GinkgoLogr.Info(fmt.Sprintf("UpstreamSpec.Version: %v, CCEConfig.Version %v, upgradeToVersion %v",
+				cluster.CCEStatus.UpstreamSpec.Version, cluster.CCEConfig.Version, upgradeToVersion))
 			return cluster.CCEStatus.UpstreamSpec.Version == upgradeToVersion && cluster.CCEConfig.Version == upgradeToVersion
 		}, tools.SetTimeout(15*time.Minute), 30*time.Second).Should(BeTrue())
 		ginkgo.GinkgoLogr.Info("Done Waiting for k8s upgrade to appear in CCEStatus.UpstreamSpec & CCEConfig")

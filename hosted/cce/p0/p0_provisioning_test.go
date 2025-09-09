@@ -66,6 +66,9 @@ var _ = Describe("P0Provisioning", func() {
 			AfterEach(func() {
 				if ctx.ClusterCleanup {
 					if cluster != nil && cluster.ID != "" {
+						GinkgoLogr.Info(fmt.Sprintf("Cleaning up cluster %s node EIPs", cluster.Name))
+						helper.DeleteCCEHostClusterNodeEIPs(cluster, ctx.RancherAdminClient)
+
 						GinkgoLogr.Info(fmt.Sprintf("Cleaning up resource cluster: %s %s", cluster.Name, cluster.ID))
 						err := helper.DeleteCCEHostCluster(cluster, ctx.RancherAdminClient)
 						Expect(err).To(BeNil())

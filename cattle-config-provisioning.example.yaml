@@ -174,6 +174,52 @@ cceClusterConfig:
       billingMode: 0
       runtime: "containerd"
     initialNodeCount: 2 # The replicas of coredns & csi controller on cce is 2
+ecsCredentials:
+ackClusterConfig:
+  clusterType: "ManagedKubernetes"
+  clusterSpec: "ack.standard"
+  kubernetesVersion: "1.32.7-aliyun.1"
+  proxyMode: "ipvs"
+  name: "ack-test"
+  displayName: "ack-test"
+  regionId: "cn-hangzhou"
+  serviceCidr: "192.168.0.0/16"
+  nodeCidrMask: 26
+  snatEntry: true
+  endpointPublicAccess: true
+  masterInstanceChargeType: "PostPaid"
+  masterPeriod: 1
+  masterAutoRenew: true
+  masterAutoRenewPeriod: 1
+  masterSystemDiskSize: 120
+  masterSystemDiskCategory: "cloud_efficiency"
+  masterCount: 3
+  osType: "Linux"
+  resourceGroupId: ""
+  vpcId: "vpc-bp1nvnos58em6fsy5seoz"
+  masterVswitchIds:
+    - "vsw-bp1thc6p0inwzt2al86gl"
+    - "vsw-bp1thc6p0inwzt2al86gl"
+    - "vsw-bp1thc6p0inwzt2al86gl"
+  keyPair: "wangsiye"
+  podVswitchIds:
+    - "vsw-bp1thc6p0inwzt2al86gl"
+  addons:
+    - name: terway-eniip
+      config: ''
+  node_pool_list:
+    - name: "default-nodepool"
+      instance_types:
+        - "ecs.c8y.xlarge"
+      instances_num: 3
+      key_pair: "wangsiye"
+      platform: "AliyunLinux3Arm64"
+      system_disk_category: "cloud_essd"
+      system_disk_size: 40
+      runtime: "containerd"
+      runtime_version: "1.6.36"
+      v_switch_ids:
+        - "vsw-bp1thc6p0inwzt2al86gl"
 rancher:
   cleanup: false
   insecure: true

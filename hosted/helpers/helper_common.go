@@ -20,6 +20,7 @@ import (
 	"github.com/rancher/shepherd/extensions/cloudcredentials"
 	"github.com/rancher/shepherd/extensions/cloudcredentials/aws"
 	"github.com/rancher/shepherd/extensions/cloudcredentials/azure"
+	"github.com/rancher/shepherd/extensions/cloudcredentials/ecs"
 	"github.com/rancher/shepherd/extensions/cloudcredentials/google"
 	"github.com/rancher/shepherd/extensions/cloudcredentials/huawei"
 	shepherdclusters "github.com/rancher/shepherd/extensions/clusters"
@@ -83,8 +84,13 @@ func CommonSynchronizedBeforeSuite() {
 			credentialConfig.ProjectID = os.Getenv("HUAWEI_PROJECT_ID")
 			credentialConfig.RegionID = GetCCERegion()
 		})
+	case "ack":
+		credentialConfig := new(cloudcredentials.AliyunECSCredentialConfig)
+		config.LoadAndUpdateConfig("ecsCredentials", credentialConfig, func() {
+			credentialConfig.AccessKeyID = os.Getenv("ALIYUN_ACCESS_KEY_ID")
+			credentialConfig.AccessKeySecret = os.Getenv("ALIYUN_ACCESS_KEY_SECRET")
+		})
 	}
-
 }
 
 func CommonBeforeSuite() RancherContext {
@@ -181,6 +187,8 @@ func WaitUntilClusterIsReady(cluster *management.Cluster, client *rancher.Client
 		// PANDARIA:
 		case "cce":
 			updatedCluster.CCEConfig = updatedCluster.CCEStatus.UpstreamSpec
+		case "ack":
+			updatedCluster.ACKConfig = updatedCluster.ACKStatus.UpstreamSpec
 		}
 	}
 	return updatedCluster, nil
@@ -416,6 +424,10 @@ func CreateCloudCredentials(client *rancher.Client) (string, error) {
 	case "cce":
 		cloudCredentialConfig = cloudcredentials.LoadCloudCredential("huawei")
 		cloudCredential, err = huawei.CreateHuaweiCloudCredentials(client, cloudCredentialConfig)
+		Expect(err).To(BeNil())
+	case "ack":
+		cloudCredentialConfig = cloudcredentials.LoadCloudCredential("aliyun")
+		cloudCredential, err = ecs.CreateECSCloudCredentials(client, cloudCredentialConfig)
 		Expect(err).To(BeNil())
 	}
 	return fmt.Sprintf("%s:%s", cloudCredential.Namespace, cloudCredential.Name), nil

@@ -62,3 +62,27 @@ export CCE_REGION=ap-southeast-1
 ginkgo run -vv -r --timeout=3h --keep-going --randomize-all --randomize-suites  --nodes 1 \
     --focus "P0Provisioning" ./hosted/${PROVIDER}/p0/
 ```
+
+**ALIYUN ACK Provisioning Tests**
+
+```sh
+#!/bin/bash
+
+cd $(dirname $0)
+
+# 编辑 ackClusterConfig
+cp cattle-config-provisioning.example.yaml cattle-config-provisioning.yaml
+
+export PROVIDER=ack
+export RANCHER_HOSTNAME=1.2.3.4.sslip.io
+export RANCHER_PASSWORD=admin123
+export CATTLE_TEST_CONFIG=cattle-config-provisioning.yaml
+export DOWNSTREAM_CLUSTER_CLEANUP=true
+
+export ALIYUN_ACCESS_KEY_ID=<aliyun_access_key_id>
+export ALIYUN_ACCESS_KEY_SECRET=<aliyun_access_key_secret>
+
+# 运行 P0 Provisioning Test
+ginkgo run -vv -r --timeout=3h --keep-going --randomize-all --randomize-suites  --nodes 1 \
+    --focus "P0Provisioning" ./hosted/${PROVIDER}/p0/
+```

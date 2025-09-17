@@ -21,6 +21,7 @@ import (
 	"github.com/rancher/shepherd/extensions/cloudcredentials/ecs"
 	"github.com/rancher/shepherd/extensions/cloudcredentials/google"
 	"github.com/rancher/shepherd/extensions/cloudcredentials/huawei"
+	"github.com/rancher/shepherd/extensions/cloudcredentials/tencent"
 	shepherdclusters "github.com/rancher/shepherd/extensions/clusters"
 	"github.com/rancher/shepherd/extensions/defaults"
 	nodestat "github.com/rancher/shepherd/extensions/nodes"
@@ -87,6 +88,12 @@ func CommonSynchronizedBeforeSuite() {
 		config.LoadAndUpdateConfig("ecsCredentials", credentialConfig, func() {
 			credentialConfig.AccessKeyID = os.Getenv("ALIYUN_ACCESS_KEY_ID")
 			credentialConfig.AccessKeySecret = os.Getenv("ALIYUN_ACCESS_KEY_SECRET")
+		})
+	case "tke":
+		credentialConfig := new(cloudcredentials.TencentCredentialConfig)
+		config.LoadAndUpdateConfig("tencentCredentials", credentialConfig, func() {
+			credentialConfig.AccessKeyID = os.Getenv("TENCENT_ACCESS_KEY_ID")
+			credentialConfig.AccessKeySecret = os.Getenv("TENCENT_ACCESS_KEY_SECRET")
 		})
 	}
 }
@@ -187,6 +194,8 @@ func WaitUntilClusterIsReady(cluster *management.Cluster, client *rancher.Client
 			updatedCluster.CCEConfig = updatedCluster.CCEStatus.UpstreamSpec
 		case "ack":
 			updatedCluster.ACKConfig = updatedCluster.ACKStatus.UpstreamSpec
+		case "tke":
+			updatedCluster.TKEConfig = updatedCluster.TKEStatus.UpstreamSpec
 		}
 	}
 	return updatedCluster, nil
@@ -426,6 +435,10 @@ func CreateCloudCredentials(client *rancher.Client) (string, error) {
 	case "ack":
 		cloudCredentialConfig = cloudcredentials.LoadCloudCredential("aliyun")
 		cloudCredential, err = ecs.CreateECSCloudCredentials(client, cloudCredentialConfig)
+		Expect(err).To(BeNil())
+	case "tke":
+		cloudCredentialConfig = cloudcredentials.LoadCloudCredential("tke")
+		cloudCredential, err = tencent.CreateTencentCloudCredentials(client, cloudCredentialConfig)
 		Expect(err).To(BeNil())
 	}
 	return fmt.Sprintf("%s:%s", cloudCredential.Namespace, cloudCredential.Name), nil

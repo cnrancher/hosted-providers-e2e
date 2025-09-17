@@ -86,3 +86,29 @@ export ALIYUN_ACCESS_KEY_SECRET=<aliyun_access_key_secret>
 ginkgo run -vv -r --timeout=3h --keep-going --randomize-all --randomize-suites  --nodes 1 \
     --focus "P0Provisioning" ./hosted/${PROVIDER}/p0/
 ```
+
+**TencentCloud TKE Provisioning Tests**
+
+```sh
+#!/bin/bash
+
+cd $(dirname $0)
+
+# 编辑 tkeClusterConfig
+cp cattle-config-provisioning.example.yaml cattle-config-provisioning.yaml
+
+export PROVIDER=tke
+export RANCHER_HOSTNAME=1.2.3.4.sslip.io
+export RANCHER_PASSWORD=admin123
+export CATTLE_TEST_CONFIG=cattle-config-provisioning.yaml
+export DOWNSTREAM_CLUSTER_CLEANUP=true
+
+export TENCENT_ACCESS_KEY_ID=<tencent_access_key_id>     
+export TENCENT_ACCESS_KEY_SECRET=<tencent_access_key_secret>  
+export TENCENT_SSH_KEY=<tencent_ssh_key>    
+export TENCENT_SSH_KEY_ID=<tencent_ssh_key_id>
+
+# 运行 P0 Provisioning Test
+ginkgo run -vv -r --timeout=3h --keep-going --randomize-all --randomize-suites  --nodes 1 \
+    --focus "P0Provisioning" ./hosted/${PROVIDER}/p0/
+```

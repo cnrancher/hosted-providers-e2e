@@ -8,7 +8,7 @@ replace (
 	github.com/rancher/norman => github.com/cnrancher/pandaria-norman v0.0.0-20241126075428-29e0d6ebb3d7 // PANDARIA
 	github.com/rancher/rancher => github.com/cnrancher/pandaria v0.0.0-20250402035512-7f97c10a5ec5 // PANDARIA
 	github.com/rancher/rancher/pkg/apis => github.com/cnrancher/pandaria/pkg/apis v0.0.0-20250402035512-7f97c10a5ec5 // PANDARIA
-	github.com/rancher/shepherd => github.com/cnrancher/shepherd v0.0.0-20250909093521-288346c56fd9 // PANDARIA
+	github.com/rancher/shepherd => github.com/cnrancher/shepherd v0.0.0-20250917030201-3f30e5bebe2d // PANDARIA
 	k8s.io/client-go => k8s.io/client-go v0.33.4 // PANDARIA
 )
 

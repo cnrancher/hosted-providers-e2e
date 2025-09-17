@@ -71,8 +71,8 @@ github.com/cnrancher/pandaria-norman v0.0.0-20241126075428-29e0d6ebb3d7 h1:GWajS
 github.com/cnrancher/pandaria-norman v0.0.0-20241126075428-29e0d6ebb3d7/go.mod h1:hdnRF72Dy1HysppguntIRXG2bsU41uEyuN7I5scdBho=
 github.com/cnrancher/pandaria/pkg/apis v0.0.0-20250402035512-7f97c10a5ec5 h1:uHRKp6lHIAUc2hdsVa4c5hIQ3Z7aBYLnzmVGkzT11z0=
 github.com/cnrancher/pandaria/pkg/apis v0.0.0-20250402035512-7f97c10a5ec5/go.mod h1:P4L5vbnEidxST3TOkYe5H9YQ6mbD5ctzyLeUYJzl+IY=
-github.com/cnrancher/shepherd v0.0.0-20250909093521-288346c56fd9 h1:2eIzgWXvGx7hWkFBGNuQ0mTXEr7Lq2UbFsl/uvjefBY=
-github.com/cnrancher/shepherd v0.0.0-20250909093521-288346c56fd9/go.mod h1:yPTIxIVr7ZE2NtadSvVkd2hOQbpwlVHkiOV1k+8lxyw=
+github.com/cnrancher/shepherd v0.0.0-20250917030201-3f30e5bebe2d h1:lbOrCuKrM3hC0RfFaTj9FVyhtinFokxXTqyf1x3oqk4=
+github.com/cnrancher/shepherd v0.0.0-20250917030201-3f30e5bebe2d/go.mod h1:yPTIxIVr7ZE2NtadSvVkd2hOQbpwlVHkiOV1k+8lxyw=
 github.com/cnrancher/tke-operator v0.0.0-20241220083730-57e5f4df8c62 h1:67S87ywc2jbmUxjTOlM8AMwIcGoIX96Utu4B6CK0dl8=
 github.com/cnrancher/tke-operator v0.0.0-20241220083730-57e5f4df8c62/go.mod h1:6BBn0q7fYrFAJALciJP4+oYLU3REYS1PvpQUP19HUZw=
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=

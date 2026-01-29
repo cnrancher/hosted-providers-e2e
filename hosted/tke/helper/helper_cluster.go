@@ -18,17 +18,23 @@ import (
 )
 
 // CreateTKEHostedCluster is a helper function that creates an TKE hosted cluster
-func CreateTKEHostedCluster(client *rancher.Client, displayName, cloudCredentialID, kubernetesVersion string, updateFunc func(clusterConfig *tke.ClusterConfig)) (*management.Cluster, error) {
+func CreateTKEHostedCluster(client *rancher.Client, displayName, cloudCredentialID, kubernetesVersion string, id int64, updateFunc func(clusterConfig *tke.ClusterConfig)) (*management.Cluster, error) {
 	var tkeClusterConfig tke.ClusterConfig
 	config.LoadConfig(tke.TKEClusterConfigConfigurationFileKey, &tkeClusterConfig)
 
 	tkeClusterConfig.ClusterBasicSettings.ClusterName = displayName
 	tkeClusterConfig.ClusterBasicSettings.ClusterVersion = kubernetesVersion
 
+	// Initialize ClusterCIDRSettings if nil
+	if tkeClusterConfig.ClusterCIDRSettings == nil {
+		tkeClusterConfig.ClusterCIDRSettings = &tke.ClusterCIDRSettings{}
+	}
+	tkeClusterConfig.ClusterCIDRSettings.ClusterCIDR = fmt.Sprintf("10.%v.0.0/16", id%255)
+
 	if updateFunc != nil {
 		updateFunc(&tkeClusterConfig)
 	}
-	ginkgo.GinkgoLogr.Info(fmt.Sprintf("Creating TKE cluster version %v", kubernetesVersion))
+	ginkgo.GinkgoLogr.Info(fmt.Sprintf("Creating TKE cluster version %v ClusterCIDR %v", kubernetesVersion, tkeClusterConfig.ClusterCIDRSettings.ClusterCIDR))
 
 	return tke.CreateTKEHostedCluster(client, displayName, cloudCredentialID, tkeClusterConfig, false, false, false, false, nil)
 }

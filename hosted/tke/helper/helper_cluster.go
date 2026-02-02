@@ -45,7 +45,7 @@ func ListTKEAllVersions(client *rancher.Client) (allVersions []string, err error
 		return
 	}
 
-	allVersions = []string{"1.32.2", "1.30.0", "1.28.3"}
+	allVersions = []string{"1.34.1", "1.32.2", "1.30.0"}
 
 	switch {
 	case strings.Contains(serverVersion, "2.12"):
